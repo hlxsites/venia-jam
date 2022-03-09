@@ -20,8 +20,8 @@
   --text-color: #000;
 
   /* fonts */
-  --body-font-family: 'helvetica neue', helvetica, ubuntu, roboto, noto, sans-serif;
-  --heading-font-family: var(var(--body-font-family));
+  --body-font-family: 'Muli', 'helvetica neue', helvetica, ubuntu, roboto, noto, sans-serif;
+  --heading-font-family: 'Source Serif Pro', serif;;
   --fixed-font-family: 'Roboto Mono', menlo, consolas, 'Liberation Mono', monospace;
 
   /* body sizes */
@@ -36,17 +36,6 @@
   --heading-font-size-s: 20px;
   --heading-font-size-xs: 18px;
 
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-      --link-color: #15beec;
-      --link-hover-color: #05aedc;
-      --background-color: #000;
-      --overlay-background-color: #ffffff20;
-      --highlight-background-color: #ffffff40;
-      --text-color: #fff;
-  }
 }
 
 html {
@@ -69,7 +58,7 @@ body.appear {
 }
 
 header {
-  height: 64px;
+  height: 59px;
 }
 
 main {
@@ -82,6 +71,7 @@ h4, h5, h6 {
   line-height: 1.25;
   margin-top: 1em;
   margin-bottom: .5em;
+  font-family: var(--heading-font-family);
 }
 
 h1 { font-size: var(--heading-font-size-xxl) }
