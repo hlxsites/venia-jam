@@ -520,6 +520,39 @@ document.addEventListener('click', () => sampleRUM('click'));
 
 loadPage(document);
 
+export function decorateButtons(block = document) {
+  const noButtonBlocks = [];
+  block.querySelectorAll(':scope a').forEach(($a) => {
+    $a.title = $a.title || $a.textContent;
+    const $block = $a.closest('div.section > div > div');
+    let blockName;
+    if ($block) {
+      blockName = $block.className;
+    }
+    if (!noButtonBlocks.includes(blockName)
+      && $a.href !== $a.textContent) {
+      const $up = $a.parentElement;
+      const $twoup = $a.parentElement.parentElement;
+      if (!$a.querySelector('img')) {
+        if ($up.childNodes.length === 1 && ($up.tagName === 'P' || $up.tagName === 'DIV')) {
+          $a.className = 'button primary'; // default
+          $up.classList.add('button-container');
+        }
+        if ($up.childNodes.length === 1 && $up.tagName === 'STRONG'
+            && $twoup.childNodes.length === 1 && $twoup.tagName === 'P') {
+          $a.className = 'button primary';
+          $twoup.classList.add('button-container');
+        }
+        if ($up.childNodes.length === 1 && $up.tagName === 'EM'
+            && $twoup.childNodes.length === 1 && $twoup.tagName === 'P') {
+          $a.className = 'button secondary';
+          $twoup.classList.add('button-container');
+        }
+      }
+    }
+  });
+}
+
 function buildHeroBlock(main) {
   const h1 = main.querySelector('h1');
   const picture = main.querySelector('picture');
@@ -568,7 +601,9 @@ export function decorateMain(main) {
   // forward compatible link rewriting
   makeLinksRelative(main);
   buildAutoBlocks(main);
+  decorateButtons(main);
   decorateSections(main);
+  decorateButtons(main);
   decorateBlocks(main);
 }
 
