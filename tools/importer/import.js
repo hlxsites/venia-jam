@@ -18,6 +18,7 @@ const PRICE_CONTAINER = '.productFullDetail-productPrice-2Ob';
 const FASHION_ITEMS_FINDER = '.productFullDetail-options-riy .option-root-20v';
 const FASHION_ITEMS = 'button';
 const SKU_SELECTOR = '.productFullDetail-details-2Ih strong';
+const CATEGORY_SELECTOR = '.breadcrumbs-root-3nF';
 
 const COLOR_CODES = {
   Peach: 'pe',
@@ -169,21 +170,22 @@ function createImagesBlock(main, document, colors = []) {
 function createMetadata(main, document) {
   const meta = {};
 
-  const title = document.querySelector('title');
-  if (title) {
-    meta.Title = title.innerHTML.replace(/[\n\t]/gm, '');
+  const h1 = main.querySelector('h1');
+  if (h1) {
+    meta.Title = h1.textContent;
   }
 
-  const desc = document.querySelector('[name="description"]');
+  const desc = main.querySelector(`${DESCRIPTION_CONTAINER} p`);
   if (desc) {
-    meta.Description = desc.content;
+    meta.Description = desc.textContent;
+  }
+
+  const category = main.querySelector(CATEGORY_SELECTOR);
+  if (category) {
+    const s = category.textContent.split('/');
+    meta.Category = s[s.length-2];
   }
   
-  const author = document.querySelector('[name="author"]');
-  if (author) {
-    meta.Author = author.content;
-  }
-
   const block = WebImporter.Blocks.getMetadataBlock(document, meta);
   main.append(block);
 
@@ -204,6 +206,7 @@ export default {
     const productData = createProductDataBlock(main, document);
     createImagesBlock(main, document, productData.colors);
     makeAbsoluteLinks(main);
+    createMetadata(main, document);
 
     WebImporter.DOMUtils.remove(main, [
       '.breadcrumbs-root-3nF',
