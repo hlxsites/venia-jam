@@ -29,6 +29,12 @@ const COLOR_CODES = {
   Latte: 'la',
 }
 
+const CODE_COLORS = {}
+
+for (let key in COLOR_CODES) {
+  CODE_COLORS[COLOR_CODES[key]] = key;
+}
+
 const makeAbsoluteLinks = (main) => {
   main.querySelectorAll('a').forEach((a) => {
     if (a.href.startsWith('/')) {
@@ -99,6 +105,15 @@ function createProductDataBlock(main, document) {
 }
 
 function createImagesBlock(main, document, colors = []) {
+
+  const getColor = (src) => {
+    for (let key in CODE_COLORS) {
+      if (src.includes(key)) {
+        return CODE_COLORS[key];
+      }
+    }
+    return '';
+  }
   const container = main.querySelector(IMAGE_CONTAINER);
   if (container) {
     const data = [['Images']];
@@ -119,7 +134,8 @@ function createImagesBlock(main, document, colors = []) {
           }
 
           if (!allImages.includes(img.src) && (img.src.includes('-') || colors.length === 0)) {
-            data.push([img]);
+            data.push([img, getColor(img.src)]);
+            img.setAttribute('width', '150px');
             allImages.push(img.src)
           }
         }
@@ -138,7 +154,8 @@ function createImagesBlock(main, document, colors = []) {
         if (!allImages.includes(newSrc)) {
           const img = document.createElement('img');
           img.src = newSrc;
-          data.push([img]);
+          img.setAttribute('width', '150px');
+          data.push([img, getColor(img.src)]);
         }
       }
       
