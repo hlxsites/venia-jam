@@ -54,20 +54,17 @@ function moveDescription(main, document) {
   }
 }
 
-function createProductDataBlock(main, document) {
+function computeProductData(main, document) {
   const result = {};
-  const data = [['Product Data']];
 
   const sku = main.querySelector(SKU_SELECTOR);
   if (sku) {
     result.sku = sku.textContent
-    data.push(['SKU', sku.textContent]);
   }
 
   const price = main.querySelector(PRICE_CONTAINER);
   if (price) {
     result.price  = price.textContent;
-    data.push(['Price', price.textContent]);
   }
 
   const fashionFinder = main.querySelectorAll(FASHION_ITEMS_FINDER);
@@ -80,26 +77,13 @@ function createProductDataBlock(main, document) {
         const items = Array.from(ffItems).map((item) => item.title);
         if (fashion.startsWith('Fashion Color')) {
           result.colors = items;
-          data.push(['Colors', items.join(', ')]);
         } else if (fashion.startsWith('Fashion Size')) {
           result.sizes = items;
-          data.push(['Sizes', items.join(', ')]);
         } else {
           console.warn('Unknown fashion item:', fashion);
         }
       }
     });
-  }
-
-  const table = WebImporter.DOMUtils.createTable(data, document);
-  
-  const descr = main.querySelector(DESCRIPTION_CONTAINER);
-  const h1 = document.querySelector('h1');
-
-  if (descr) {
-    descr.after(table);
-  } else {
-    descr.after(h1);
   }
 
   return result;
@@ -164,10 +148,13 @@ function createImagesBlock(main, document, colors = []) {
 
     const table = WebImporter.DOMUtils.createTable(data, document);
     container.replaceWith(table);
+
+    // main image
+    return allImages[0];
   }
 }
 
-function createMetadata(main, document) {
+function createMetadata(main, document, extra) {
   const meta = {};
 
   const h1 = main.querySelector('h1');
@@ -185,6 +172,19 @@ function createMetadata(main, document) {
     const s = category.textContent.split('/');
     meta.Category = s[s.length-2];
   }
+
+  const { image, sku, price, colors, sizes } = extra;
+
+  if (image) {
+    const img = document.createElement('img');
+    img.src = image;
+    meta.Image = img;
+  }
+
+  meta.SKU = sku;
+  meta.Price = price || '';
+  meta.colors = colors ? colors.join(', ') : '';
+  meta.sizes = sizes ? sizes.join(', ') : '';
   
   const block = WebImporter.Blocks.getMetadataBlock(document, meta);
   main.append(block);
@@ -203,10 +203,13 @@ export default {
     const main = document.querySelector(MAIN_SELECTOR);
 
     moveDescription(main, document);
-    const productData = createProductDataBlock(main, document);
-    createImagesBlock(main, document, productData.colors);
+    const data = computeProductData(main, document);
+    const image = createImagesBlock(main, document, data.colors);
     makeAbsoluteLinks(main);
-    createMetadata(main, document);
+    createMetadata(main, document, {
+      image,
+      ...data,
+    });
 
     WebImporter.DOMUtils.remove(main, [
       '.breadcrumbs-root-3nF',
