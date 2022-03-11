@@ -22,8 +22,6 @@
   --button-hover-color: #136ff6;
   --dark-background-color: #1b252c;
 
-
-
   /* fonts */
   --body-font-family: 'Muli', 'helvetica neue', helvetica, ubuntu, roboto, noto, sans-serif;
   --heading-font-family: 'Source Serif Pro', serif;;
@@ -147,7 +145,7 @@ main input:hover {
 }
 
 main .section {
-  padding: 64px;
+  padding: 16px;
 }
 
 main pre {
@@ -221,11 +219,19 @@ main a.button.secondary {
   color: var(--text-color)
 } 
 
+main .default-content-wrapper {
+  text-align: center;
+}
+
 
 @media (min-width: 600px) {
   main {
     min-height: calc(100vh - 190px);
   }
+
+  main .section {
+    padding: 32px;
+  }  
 }
 
 @media (min-width: 900px) {
@@ -245,6 +251,10 @@ main a.button.secondary {
   .section > div {
     max-width: 800px;
     margin: auto;
+  }
+
+  main .section {
+    padding: 64px;
   }
 }
 
