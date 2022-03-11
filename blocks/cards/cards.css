@@ -1,6 +1,7 @@
 .cards > div {
     display: flex;
     flex-direction: column;
+    justify-content: center;
 }
 
 main .cards-wrapper {
