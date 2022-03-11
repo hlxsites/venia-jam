@@ -1,0 +1,90 @@
+.section > div.columns-wrapper {
+    max-width: 1200px;
+    margin: 64px auto;
+}
+
+.columns {
+    text-align: center;
+}
+
+.columns > div {
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+}
+
+.columns h3 {
+    font-family: var(--body-font-family);
+    font-size: var(--heading-font-size-xs);
+}
+
+.columns img {
+    width: 100%;
+}
+
+.columns > div > div {
+    padding: 8px;
+}
+
+.columns p.button-container {
+    display: inline-block;
+    margin: 0 16px 0 0;
+}
+
+@media (min-width: 900px) {
+    .columns {
+        text-align: left;
+    }
+
+    .columns > div {
+        flex-direction: unset;
+    }
+    
+    .columns > div > div {
+        flex: 1;
+    }
+    
+}
+
+/* dark variant */
+
+.columns.dark > div > div  {
+    background-color: var(--dark-background-color);
+    color: white;
+}
+
+.columns.dark a.button:any-link {
+    color: currentColor;
+}
+
+.columns.dark > div > div.columns-image {
+    background-color: unset;
+    padding: 8px 0;
+    display: flex;
+    align-items: center;
+}
+  
+  .columns.dark img {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+    height: 370px;
+    display: block;
+  }
+  
+  .columns.dark > div > div {
+    padding: 32px;
+    box-sizing: border-box;
+  }
+
+@media (min-width: 900px) {
+
+    .columns.dark > div > div {
+        flex: 2 2 40%;
+        min-height: 400px;
+    }
+
+    .columns.dark div.columns-image {
+        flex: 1 1 60%;
+    }
+}
