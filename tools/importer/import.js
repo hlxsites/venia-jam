@@ -48,9 +48,8 @@ const makeAbsoluteLinks = (main) => {
 
 function moveDescription(main, document) {
   const descr = main.querySelector(DESCRIPTION_CONTAINER);
-  const h1 = document.querySelector('h1');
-  if (descr && h1) {
-    h1.after(descr);
+  if (descr) {
+    main.append(descr);
   }
 }
 
@@ -89,7 +88,7 @@ function computeProductData(main, document) {
   return result;
 }
 
-function createImagesBlock(main, document, colors = []) {
+function createProductBlock(main, document, colors = []) {
 
   const getColor = (src) => {
     for (let key in CODE_COLORS) {
@@ -101,7 +100,7 @@ function createImagesBlock(main, document, colors = []) {
   }
   const container = main.querySelector(IMAGE_CONTAINER);
   if (container) {
-    const data = [['Images']];
+    const data = [['Product']];
     const imgs = container.querySelectorAll('img');
     const allImages = [];
     if (imgs) {
@@ -183,8 +182,8 @@ function createMetadata(main, document, extra) {
 
   meta.SKU = sku;
   meta.Price = price || '';
-  meta.colors = colors ? colors.join(', ') : '';
-  meta.sizes = sizes ? sizes.join(', ') : '';
+  meta.Colors = colors ? colors.join(', ') : '';
+  meta.Sizes = sizes ? sizes.join(', ') : '';
   
   const block = WebImporter.Blocks.getMetadataBlock(document, meta);
   main.append(block);
@@ -204,7 +203,7 @@ export default {
 
     moveDescription(main, document);
     const data = computeProductData(main, document);
-    const image = createImagesBlock(main, document, data.colors);
+    const image = createProductBlock(main, document, data.colors);
     makeAbsoluteLinks(main);
     createMetadata(main, document, {
       image,
