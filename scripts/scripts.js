@@ -513,7 +513,7 @@ initHlx();
 
 const LCP_BLOCKS = ['hero']; // add your LCP blocks to the list
 const RUM_GENERATION = 'project-1'; // add your RUM generation information here
-const PRODUCTION_DOMAINS = [];
+const PRODUCTION_DOMAINS = ['venia.magento.com'];
 
 sampleRUM('top');
 window.addEventListener('load', () => sampleRUM('load'));
