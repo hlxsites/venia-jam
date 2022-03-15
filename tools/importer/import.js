@@ -205,10 +205,12 @@ export default {
     const data = computeProductData(main, document);
     const image = createProductBlock(main, document, data.colors);
     makeAbsoluteLinks(main);
-    createMetadata(main, document, {
+    const meta = createMetadata(main, document, {
       image,
       ...data,
     });
+
+    main.dataset.category = meta.Category ? meta.Category.toLowerCase() : ''; 
 
     WebImporter.DOMUtils.remove(main, [
       '.breadcrumbs-root-3nF',
@@ -234,7 +236,9 @@ export default {
    * @param {String} url The url of the document being transformed.
    * @param {HTMLDocument} document The document
    */
-  generateDocumentPath: (url) => {
-    return new URL(url).pathname.replace(/\.html$/, '');
+  generateDocumentPath: (url, document) => {
+    const main = document.querySelector(MAIN_SELECTOR);
+    const category = main.dataset.category;
+    return `/${category}${new URL(url).pathname.replace(/\.html$/, '')}`;
   },
 }
