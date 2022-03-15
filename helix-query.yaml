@@ -29,8 +29,16 @@ indices:
         select: head > meta[name="category"]
         value: |
           attribute(el, 'content')
-      description:
-        select: head > meta[name="description"]
+      price:
+        select: head > meta[name="price"]
+        value: |
+          attribute(el, 'content')
+      colors:
+        select: head > meta[name="colors"]
+        value: |
+          attribute(el, 'content')
+      sizes:
+        select: head > meta[name="sizes"]
         value: |
           attribute(el, 'content')
       lastModified:
