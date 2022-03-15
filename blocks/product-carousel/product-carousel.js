@@ -7,7 +7,10 @@ function createProductCard(product, prefix) {
     <h4>${product.title}</h4>
     <p>$48.00</p>
     <p><a class="button" href=${product.path}>Add to cart</a></p>`;
-  card.prepend(createOptimizedPicture(product.image, product.title, false, [{ width: 400 }]));
+  const a = document.createElement('a');
+  a.href = product.path;
+  a.append(createOptimizedPicture(product.image, product.title, false, [{ width: 400 }]));
+  card.prepend(a);
   return (card);
 }
 

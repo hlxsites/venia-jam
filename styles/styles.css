@@ -28,6 +28,7 @@
   --fixed-font-family: 'Roboto Mono', menlo, consolas, 'Liberation Mono', monospace;
 
   /* body sizes */
+  --body-font-size-l: 21px;
   --body-font-size-m: 16px;
   --body-font-size-s: 14px;
 
@@ -221,6 +222,10 @@ main a.button.secondary {
 
 main .default-content-wrapper {
   text-align: center;
+}
+
+main .default-content-wrapper ul {
+  text-align: left;
 }
 
 
