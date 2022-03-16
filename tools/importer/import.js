@@ -9,6 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+/* global WebImporter */
 /* eslint-disable no-console, class-methods-use-this */
 
 const MAIN_SELECTOR = '.main-page-3Fo';
@@ -28,11 +29,12 @@ const COLOR_CODES = {
   Lily: 'ly',
   Lilac: 'll',
   Latte: 'la',
-}
+};
 
-const CODE_COLORS = {}
+const CODE_COLORS = {};
 
-for (let key in COLOR_CODES) {
+// eslint-disable-next-line guard-for-in, no-restricted-syntax
+for (const key in COLOR_CODES) {
   CODE_COLORS[COLOR_CODES[key]] = key;
 }
 
@@ -43,31 +45,30 @@ const makeAbsoluteLinks = (main) => {
       a.href = u.toString();
     }
   });
-}
+};
 
-
-function moveDescription(main, document) {
+function moveDescription(main) {
   const descr = main.querySelector(DESCRIPTION_CONTAINER);
   if (descr) {
     main.append(descr);
   }
 }
 
-function computeProductData(main, document) {
+function computeProductData(main) {
   const result = {};
 
   const sku = main.querySelector(SKU_SELECTOR);
   if (sku) {
-    result.sku = sku.textContent
+    result.sku = sku.textContent;
   }
 
   const price = main.querySelector(PRICE_CONTAINER);
   if (price) {
-    result.price  = price.textContent;
+    result.price = price.textContent;
   }
 
   const fashionFinder = main.querySelectorAll(FASHION_ITEMS_FINDER);
- 
+
   if (fashionFinder) {
     fashionFinder.forEach((ff) => {
       const fashion = ff.textContent;
@@ -89,15 +90,16 @@ function computeProductData(main, document) {
 }
 
 function createProductBlock(main, document, colors = []) {
-
   const getColor = (src) => {
-    for (let key in CODE_COLORS) {
+    // eslint-disable-next-line no-restricted-syntax
+    for (const key in CODE_COLORS) {
       if (src.includes(key)) {
         return CODE_COLORS[key];
       }
     }
     return '';
-  }
+  };
+
   const container = main.querySelector(IMAGE_CONTAINER);
   if (container) {
     const data = [['Product']];
@@ -107,8 +109,8 @@ function createProductBlock(main, document, colors = []) {
       imgs.forEach((img) => {
         if (img.src && !img.src.startsWith('data:')) {
           if (img.srcset) {
-            const split = img.srcset.replace(/\s+[0-9]+(\.[0-9]+)?[wx]/g, "").split(/,\n/);
-            img.src = split[split.length-1];
+            const split = img.srcset.replace(/\s+[0-9]+(\.[0-9]+)?[wx]/g, '').split(/,\n/);
+            img.src = split[split.length - 1];
             img.src = img.src.replace('main_1', 'main').replace('main_2', 'main');
             img.removeAttribute('srcset');
             img.removeAttribute('width');
@@ -120,7 +122,7 @@ function createProductBlock(main, document, colors = []) {
           if (!allImages.includes(img.src) && (img.src.includes('-') || colors.length === 0)) {
             data.push([img, getColor(img.src)]);
             img.setAttribute('width', '150px');
-            allImages.push(img.src)
+            allImages.push(img.src);
           }
         }
       });
@@ -142,7 +144,6 @@ function createProductBlock(main, document, colors = []) {
           data.push([img, getColor(img.src)]);
         }
       }
-      
     });
 
     const table = WebImporter.DOMUtils.createTable(data, document);
@@ -151,6 +152,7 @@ function createProductBlock(main, document, colors = []) {
     // main image
     return allImages[0];
   }
+  return '';
 }
 
 function createMetadata(main, document, extra) {
@@ -169,10 +171,12 @@ function createMetadata(main, document, extra) {
   const category = main.querySelector(CATEGORY_SELECTOR);
   if (category) {
     const s = category.textContent.split('/');
-    meta.Category = s[s.length-2];
+    meta.Category = s[s.length - 2];
   }
 
-  const { image, sku, price, colors, sizes } = extra;
+  const {
+    image, sku, price, colors, sizes,
+  } = extra;
 
   if (image) {
     const img = document.createElement('img');
@@ -184,7 +188,7 @@ function createMetadata(main, document, extra) {
   meta.Price = price || '';
   meta.Colors = colors ? colors.join(', ') : '';
   meta.Sizes = sizes ? sizes.join(', ') : '';
-  
+
   const block = WebImporter.Blocks.getMetadataBlock(document, meta);
   main.append(block);
 
@@ -210,7 +214,7 @@ export default {
       ...data,
     });
 
-    main.dataset.category = meta.Category ? meta.Category.toLowerCase() : ''; 
+    main.dataset.category = meta.Category ? meta.Category.toLowerCase() : '';
 
     WebImporter.DOMUtils.remove(main, [
       '.breadcrumbs-root-3nF',
@@ -224,10 +228,8 @@ export default {
       '.productFullDetail-details-2Ih',
       PRICE_CONTAINER,
     ]);
-    
 
     return main;
-
   },
 
   /**
@@ -238,7 +240,7 @@ export default {
    */
   generateDocumentPath: (url, document) => {
     const main = document.querySelector(MAIN_SELECTOR);
-    const category = main.dataset.category;
+    const { category } = main.dataset;
     return `/${category}${new URL(url).pathname.replace(/\.html$/, '')}`;
   },
-}
+};
