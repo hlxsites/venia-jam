@@ -1,0 +1,38 @@
+main .products {
+    display: flex;
+    flex-wrap: wrap;
+  }
+      
+main .products > div {
+    width: 50%;
+    position: relative;
+}
+
+main .products a.button:any-link {
+    font-size: var(--body-font-size-s);
+    padding: 4px 15px;
+    text-transform: uppercase;
+}
+
+
+main .products h4 {
+    font-size: var(--body-font-size-m);
+    font-family: var(--body-font-family);
+}
+
+main .products {
+    font-size: var(--body-font-size-m);
+}
+
+
+@media (min-width: 900px) {
+    main .products > div {
+        width: calc(100%/3);
+    }    
+}
+
+@media (min-width: 1200px) {
+    main .products > div {
+        width: calc(100%/4);
+    }    
+}

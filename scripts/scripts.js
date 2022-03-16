@@ -521,7 +521,7 @@ document.addEventListener('click', () => sampleRUM('click'));
 
 loadPage(document);
 
-export async function lookupPages(pathnames) {
+export async function lookupPages(config) {
   if (!window.pageIndex) {
     const resp = await fetch('/query-index.json');
     const json = await resp.json();
@@ -529,10 +529,31 @@ export async function lookupPages(pathnames) {
     json.data.forEach((row) => {
       lookup[row.path] = row;
     });
-    window.pageIndex = { data: json, lookup };
+    window.pageIndex = { data: json.data, lookup };
   }
-  const result = pathnames.map((path) => window.pageIndex.lookup[path]).filter((e) => e);
-  return (result);
+  if (Array.isArray(config)) {
+    const pathnames = config;
+    return (pathnames.map((path) => window.pageIndex.lookup[path]).filter((e) => e));
+  }
+
+  /* filter with config */
+  const keys = Object.keys(config);
+  const tokens = {};
+  keys.forEach((key) => {
+    tokens[key] = config[key].split(',').map((t) => t.trim());
+  });
+
+  const results = window.pageIndex.data.filter((row) => {
+    const matched = keys.every((key) => {
+      if (row[key]) {
+        const rowValues = row[key].split(',').map((t) => t.trim());
+        return tokens[key].some((t) => rowValues.includes(t));
+      }
+      return false;
+    });
+    return (matched);
+  });
+  return results;
 }
 
 export function decorateButtons(block = document) {

@@ -1,6 +1,6 @@
 import { lookupPages, createOptimizedPicture } from '../../scripts/scripts.js';
 
-function createProductCard(product, prefix) {
+export function createProductCard(product, prefix) {
   const card = document.createElement('div');
   card.className = `${prefix}-card`;
   card.innerHTML = `
