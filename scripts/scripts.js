@@ -521,7 +521,7 @@ document.addEventListener('click', () => sampleRUM('click'));
 
 loadPage(document);
 
-export async function lookupPages(config) {
+export async function lookupPages(config, facets = {}) {
   if (!window.pageIndex) {
     const resp = await fetch('/query-index.json');
     const json = await resp.json();
@@ -537,6 +537,7 @@ export async function lookupPages(config) {
   }
 
   /* filter with config */
+  const facetKeys = Object.keys(facets);
   const keys = Object.keys(config);
   const tokens = {};
   keys.forEach((key) => {
@@ -551,6 +552,21 @@ export async function lookupPages(config) {
       }
       return false;
     });
+    if (matched) {
+      /* facets */
+      facetKeys.forEach((facetKey) => {
+        if (row[facetKey]) {
+          const rowValues = row[facetKey].split(',').map((t) => t.trim());
+          rowValues.forEach((val) => {
+            if (facets[facetKey][val]) {
+              facets[facetKey][val] += 1;
+            } else {
+              facets[facetKey][val] = 1;
+            }
+          });
+        }
+      });
+    }
     return (matched);
   });
   return results;
