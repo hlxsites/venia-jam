@@ -17,6 +17,7 @@
   --background-color: #fff;
   --overlay-background-color: #00000020;
   --highlight-background-color: #00000040;
+  --medium-background-color: #545d63;
   --text-color: #000;
   --button-color: #035fe6;
   --button-hover-color: #136ff6;
@@ -124,17 +125,6 @@ main input, main button {
   box-sizing: border-box;
 }
 
-main button {
-  color: var(--background-color);
-  border: none;
-  background-color: var(--link-color);
-}
-
-main button:hover {
-  background-color: var(--link-hover-color);
-  cursor: pointer;
-}
-
 main input {
   border: 1px solid var(--text-color);
   color: var(--text-color);
@@ -188,7 +178,7 @@ main img {
 
 /* buttons */
 
-main a.button:any-link {
+main a.button:any-link, main button {
   text-decoration: none;
   border: 2px solid transparent;
   padding: 5px 30px;
@@ -210,11 +200,11 @@ main a.button:any-link {
   border-radius: 30px;
 }
 
-main a.button:hover, a.button:focus {
+main a.button:hover, a.button:focus, main button:hover, button:focus  {
   background-color: var(--button-hover-color);
 }
 
-main a.button.secondary {
+main a.button.secondary, main button.secondary {
   background-color: unset;
   border: 2px solid currentColor;
   color: var(--text-color)

@@ -1,8 +1,106 @@
+main .products-container h1 {
+    font-size: var(--body-font-size-l);
+    font-family: var(--body-font-family);
+}
+
+main .products-controls {
+    text-align: center;
+}
+
+main .products-controls button {
+    display: inline-block;
+    width: unset;
+}
+
+main .products-facets  {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100vw;
+    z-index: 1;
+    background-color: #0008;
+}
+
+main .products-facets > div {
+    height: 100vh;
+    padding: 16px;
+    overflow-y: scroll;
+    width: 360px;
+    background-color: var(--background-color);
+}
+
+main .products-filters-selected span {
+    background-color: var(--medium-background-color);
+    padding: 10px 12px 10px 38px;
+    border-radius: 6px;
+    color: var(--background-color);
+    background-image: url(/styles/close-white.svg);
+    background-size: 25px;
+    background-position: 8px;
+    background-repeat: no-repeat;
+    margin-right: 8px;
+    margin-bottom: 8px;
+    display: inline-block;
+}
+
+main .products-facet {
+    border-top: 2px solid #ccc;
+    padding: 10px 0;
+    margin: 20px 0;
+}
+
+main .products-filters-selected:empty + p {
+    display: none;
+}
+
+main .products-facets button {
+    font-size: var(--body-font-size-s);
+    width: unset;
+}
+
+main .products-facets h3 {
+    font-size: var(--body-font-size-l);
+    font-family: var(--body-font-family);
+}
+
+main .products-facets input[type="checkbox"] {
+    display: none;
+}
+
+main .products-facets label {
+    display: block;
+    padding-left: 30px;
+    background-image: url(/styles/checkbox.svg);
+    background-size: contain;
+    background-position: center left;
+    background-repeat: no-repeat;
+    margin: 8px 0;
+}
+
+main .products-facets :checked + label {
+    background-image: url(/styles/checked.svg);
+}
+
+main .products-facets.visible {
+    display: block;
+}
+
+main .products-sortby {
+    display: none;
+}
+
+main .products-sortby.visible {
+    display: block;
+}
+
+
 main .products-results {
     display: flex;
     flex-wrap: wrap;
-  }
-      
+}
+
 main .products-results > div {
     width: 50%;
     position: relative;
@@ -22,10 +120,6 @@ main .products-results h4 {
 
 main .products-results {
     font-size: var(--body-font-size-m);
-}
-
-main .products-facets, main .products-controls, main .products-sortby {
-    display: none;
 }
 
 @media (min-width: 900px) {

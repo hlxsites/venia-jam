@@ -522,6 +522,7 @@ document.addEventListener('click', () => sampleRUM('click'));
 loadPage(document);
 
 export async function lookupPages(config, facets = {}) {
+  /* load index */
   if (!window.pageIndex) {
     const resp = await fetch('/query-index.json');
     const json = await resp.json();
@@ -531,12 +532,14 @@ export async function lookupPages(config, facets = {}) {
     });
     window.pageIndex = { data: json.data, lookup };
   }
+
+  /* simple array lookup */
   if (Array.isArray(config)) {
     const pathnames = config;
     return (pathnames.map((path) => window.pageIndex.lookup[path]).filter((e) => e));
   }
 
-  /* filter with config */
+  /* setup config */
   const facetKeys = Object.keys(facets);
   const keys = Object.keys(config);
   const tokens = {};
@@ -544,17 +547,26 @@ export async function lookupPages(config, facets = {}) {
     tokens[key] = config[key].split(',').map((t) => t.trim());
   });
 
+  /* filter */
   const results = window.pageIndex.data.filter((row) => {
-    const matched = keys.every((key) => {
+    const filterMatches = {};
+    const matchedAll = keys.every((key) => {
+      let matched = false;
       if (row[key]) {
         const rowValues = row[key].split(',').map((t) => t.trim());
-        return tokens[key].some((t) => rowValues.includes(t));
+        matched = tokens[key].some((t) => rowValues.includes(t));
       }
-      return false;
+      filterMatches[key] = matched;
+      return matched;
     });
-    if (matched) {
-      /* facets */
-      facetKeys.forEach((facetKey) => {
+
+    /* facets */
+    facetKeys.forEach((facetKey) => {
+      let includeInFacet = true;
+      Object.keys(filterMatches).forEach((filterKey) => {
+        if (filterKey !== facetKey && !filterMatches[filterKey]) includeInFacet = false;
+      });
+      if (includeInFacet) {
         if (row[facetKey]) {
           const rowValues = row[facetKey].split(',').map((t) => t.trim());
           rowValues.forEach((val) => {
@@ -565,9 +577,9 @@ export async function lookupPages(config, facets = {}) {
             }
           });
         }
-      });
-    }
-    return (matched);
+      }
+    });
+    return (matchedAll);
   });
   return results;
 }
