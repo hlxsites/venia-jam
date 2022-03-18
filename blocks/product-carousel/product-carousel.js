@@ -5,7 +5,7 @@ export function createProductCard(product, prefix) {
   card.className = `${prefix}-card`;
   card.innerHTML = `
     <h4>${product.title}</h4>
-    <p>$48.00</p>
+    <p>${product.price}</p>
     <p><a class="button" href=${product.path}>Add to cart</a></p>`;
   const a = document.createElement('a');
   a.href = product.path;

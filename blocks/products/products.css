@@ -1,6 +1,14 @@
+main div.products-container {
+    padding-top: 0;
+}
+
 main .products-container h1 {
     font-size: var(--body-font-size-l);
     font-family: var(--body-font-family);
+}
+
+main .products-wrapper {
+    max-width: unset;
 }
 
 main .products-controls {
@@ -24,11 +32,47 @@ main .products-facets  {
 }
 
 main .products-facets > div {
-    height: 100vh;
-    padding: 16px;
+    padding: 20px;
     overflow-y: scroll;
     width: 360px;
     background-color: var(--background-color);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    box-sizing: border-box;
+    pointer-events: none;
+}
+
+main .products-facets > div::after {
+    position: absolute;
+    background-image: url(/styles/close.svg);
+    background-size: contain;
+    content: ' ';
+    right: 20px;
+    top: 20px;
+    width: 24px;
+    height: 24px;
+    display: block;
+    cursor: pointer;
+    pointer-events: all;
+}
+
+main .products-facets > div > * {
+    pointer-events: all;
+}
+
+
+main .products-facets .products-filters {
+    flex: 1;
+    overflow-y: scroll;
+}
+
+main .products-facets .products-apply-filters {
+    flex: 0;
+    height: 200px;
+    padding: 16px 0;
+    text-align: center;
 }
 
 main .products-filters-selected span {
@@ -47,7 +91,7 @@ main .products-filters-selected span {
 
 main .products-facet {
     border-top: 2px solid #ccc;
-    padding: 10px 0;
+    padding-bottom: 14px;
     margin: 20px 0;
 }
 
@@ -58,12 +102,24 @@ main .products-filters-selected:empty + p {
 main .products-facets button {
     font-size: var(--body-font-size-s);
     width: unset;
+    margin: 0;
+}
+
+main .products-facets h2 {
+    font-family: var(--body-font-family);
+    font-size: var(--body-font-size-l);
+    font-weight: 400;
+    margin-top: 5px;
+    margin-bottom: 20px;
 }
 
 main .products-facets h3 {
-    font-size: var(--body-font-size-l);
     font-family: var(--body-font-family);
+    font-size: var(--body-font-size-m);
+    font-weight: 400;
+    margin: 17px 0;
 }
+
 
 main .products-facets input[type="checkbox"] {
     display: none;
@@ -76,7 +132,7 @@ main .products-facets label {
     background-size: contain;
     background-position: center left;
     background-repeat: no-repeat;
-    margin: 8px 0;
+    margin: 16px 0;
 }
 
 main .products-facets :checked + label {
@@ -88,10 +144,42 @@ main .products-facets.visible {
 }
 
 main .products-sortby {
-    display: none;
+    text-align: center;
+    font-size: var(--body-font-size-s);
+    position: relative;
 }
 
-main .products-sortby.visible {
+main .products-sortby ul {
+    display: none;
+    position: absolute;
+    top: -40px;
+    right: calc(50% - 105px);
+    z-index: 1;
+    background-color: var(--background-color);
+    border: 1px solid #ddd;
+    text-align: left;
+    list-style: none;
+    padding: 0;
+    border-radius: 3px;
+    box-shadow: 0px 2px 5px 0px var(--overlay-background-color);
+    font-size: var(--body-font-size-m);
+    min-width: 190px;
+}
+
+main .products-sortby ul li {
+    padding: 5px 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+main .products-sortby ul li.selected {
+    background: url(/styles/checkmark.svg) center right 10px no-repeat;
+}
+
+main .products-sortby ul li:hover {
+    background-color: #eee;
+}
+
+main .products-sortby ul.visible {
     display: block;
 }
 
@@ -123,13 +211,93 @@ main .products-results {
 }
 
 @media (min-width: 900px) {
-    main .products-results > div {
-        width: calc(100%/3);
+
+    main .products-facets > div::after {
+        display: none;
+    }
+
+    main .products-facets .products-apply-filters {
+        display: none;
+    }
+
+    main .products-facets  {
+        z-index: unset;
+        height: unset;
+        display: block;
+        background: unset;
+    }
+
+    main .products-facets > div {
+        height: unset;
+    }
+
+    main .products-facets .products-filters {
+        overflow-y: unset;
+        height: unset;
+    }
+
+    main .products-results {
+        grid-area: results;
+    }
+
+    main .products-controls {
+        grid-area: controls;
+        text-align: left;
+    }
+
+    main .products-controls button {
+        display: none;
+    }
+
+    main .products-facets {
+        grid-area: facets;
+        display: unset;
+        position: unset;
+        width: 360px;
+    }
+
+    main .products {
+        display: grid;
+        grid-template-areas: '- controls sortby' 'facets results results';
+    }
+
+    main .products-sortby {
+        display: unset;
+        grid-area: sortby;
+        text-align: right;
+    }
+
+    main .products-sortby p {
+        display: inline-block;
+        border-radius: 5px;
+        border: 2px solid #888;
+        padding: 5px 45px 5px 15px;
+        font-size: var(--body-font-size-m);
+        background: url(/styles/chevron-down.svg) center right 10px no-repeat;
+    }
+
+
+    main .products-sortby ul {
+        top: 40px;
+        right: 0;
+        z-index: 1;
+        background-color: var(--background-color);
+        border: 1px solid #ddd;
+        text-align: left;
+        list-style: none;
+        padding: 0;
+        border-radius: 3px;
+        box-shadow: 0px 2px 5px 0px var(--overlay-background-color);
+        font-size: var(--body-font-size-m);
+        min-width: 190px;
     }    
 }
 
 @media (min-width: 1200px) {
+
     main .products-results > div {
-        width: calc(100%/4);
-    }    
+        width: calc(100%/3);
+        }
 }
+
+
