@@ -1,7 +1,9 @@
-import { lookupPages, readBlockConfig } from '../../scripts/scripts.js';
+import { fetchPlaceholders, lookupPages, readBlockConfig } from '../../scripts/scripts.js';
 import { createProductCard } from '../product-carousel/product-carousel.js';
 
 export default async function decorate(block) {
+  const ph = await fetchPlaceholders();
+
   const addEventListeners = (elements, event, callback) => {
     elements.forEach((e) => {
       e.addEventListener(event, callback);
@@ -12,20 +14,20 @@ export default async function decorate(block) {
   if (!config.length) config = readBlockConfig(block);
 
   block.innerHTML = `<div class="products-controls">
-      <p class="products-results-count"><span id="products-results-count"></span> Results</p>
-      <button class="products-filter-button secondary">Filter</button>
-      <button class="products-sort-button secondary">Sort</button>
+      <p class="products-results-count"><span id="products-results-count"></span> ${ph.results}</p>
+      <button class="products-filter-button secondary">${ph.filter}</button>
+      <button class="products-sort-button secondary">${ph.sort}</button>
     </div>
     <div class="products-facets">
     </div>
     <div class="products-sortby">
-      <p>Sort By <span data-sort="best" id="products-sortby">Best Match</span></p>
+      <p>${ph.sortBy} <span data-sort="best" id="products-sortby">${ph.bestMatch}</span></p>
       <ul>
-        <li data-sort="best">Best Match</li>
-        <li data-sort="position">Position</li>
-        <li data-sort="price-desc">Price: High to Low</li>
-        <li data-sort="price-asc">Price: Low to High</li>
-        <li data-sort="name">Product Name</li>
+        <li data-sort="best">${ph.bestMatch}</li>
+        <li data-sort="position">${ph.position}</li>
+        <li data-sort="price-desc">${ph.priceHighToLow}</li>
+        <li data-sort="price-asc">${ph.priceLowToHigh}</li>
+        <li data-sort="name">${ph.productName}</li>
       </ul>
     </div>
   </div>
@@ -65,7 +67,7 @@ export default async function decorate(block) {
   const displayResults = async (results) => {
     resultsElement.innerHTML = '';
     results.forEach((product) => {
-      resultsElement.append(createProductCard(product, 'products'));
+      resultsElement.append(createProductCard(product, 'products', ph));
     });
   };
 
@@ -84,9 +86,9 @@ export default async function decorate(block) {
 
   const displayFacets = (facets, filters) => {
     const selected = getSelectedFilters().map((check) => check.value);
-    facetsElement.innerHTML = `<div><div class="products-filters"><h2>Filters</h2>
+    facetsElement.innerHTML = `<div><div class="products-filters"><h2>${ph.filters}</h2>
     <div class="products-filters-selected"></div>
-    <p><button class="products-filters-clear secondary">Clear all</button></p>
+    <p><button class="products-filters-clear secondary">${ph.clearAll}</button></p>
     <div class="products-filters-facetlist"></div>
     </div>
     <div class="products-apply-filters">
@@ -133,7 +135,7 @@ export default async function decorate(block) {
       const div = document.createElement('div');
       div.className = 'products-facet';
       const h3 = document.createElement('h3');
-      h3.innerHTML = facetKey;
+      h3.innerHTML = ph[facetKey];
       div.append(h3);
       const facetValues = Object.keys(facets[facetKey]);
       facetValues.forEach((facetValue) => {
