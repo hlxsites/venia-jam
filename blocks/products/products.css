@@ -293,6 +293,11 @@ main .products-results {
     }    
 }
 
+main .products-results img {
+    aspect-ratio: 400 / 496;
+    width: 100%;
+}
+
 @media (min-width: 1200px) {
 
     main .products-results > div {
