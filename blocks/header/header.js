@@ -1,4 +1,9 @@
-import { makeLinksRelative, readBlockConfig } from '../../scripts/scripts.js';
+import {
+  makeLinksRelative,
+  readBlockConfig,
+  decorateBlock,
+  loadBlock,
+} from '../../scripts/scripts.js';
 
 /**
  * collapses all open nav sections
@@ -59,4 +64,10 @@ export default async function decorate(block) {
   nav.setAttribute('aria-expanded', 'false');
 
   block.append(nav);
+
+  /* init cart */
+  const cart = block.querySelector('.icon-cart').closest('li');
+  cart.classList.add('cart');
+  decorateBlock(cart);
+  loadBlock(cart);
 }
