@@ -697,6 +697,46 @@ function buildAutoBlocks(main) {
   }
 }
 
+function decoratePWA() {
+  const appendLink = (rel, href, sizes) => {
+    const link = document.createElement('link');
+    link.setAttribute('rel', rel);
+    link.href = href;
+    if (sizes) link.setAttribute('sizes', sizes);
+    document.head.append(link);
+  };
+  appendLink('manifest', '/manifest.webmanifest');
+  appendLink('apple-touch-icon', '/icons/venia_square_57.png');
+  appendLink('apple-touch-icon', '/icons/apple-touch-icon.png"', '180x180');
+
+  const theme = document.createElement('meta');
+  theme.setAttribute('name', 'theme-color');
+  theme.setAttribute('content', '#ff6334');
+  document.head.append(theme);
+
+  const registerServiceWorker = async () => {
+    if ('serviceWorker' in navigator) {
+      try {
+        const registration = await navigator.serviceWorker.register(
+          '/worker.js',
+          { scope: '/' },
+        );
+        if (registration.installing) {
+          console.log('Service worker installing');
+        } else if (registration.waiting) {
+          console.log('Service worker installed');
+        } else if (registration.active) {
+          console.log('Service worker active');
+        }
+      } catch (error) {
+        console.error(`Registration failed with ${error}`);
+      }
+    }
+  };
+
+  registerServiceWorker();
+}
+
 /**
  * Decorates the main element.
  * @param {Element} main The main element
@@ -711,11 +751,7 @@ export function decorateMain(main) {
   decorateSections(main);
   decorateButtons(main);
   decorateBlocks(main);
-
-  const link = document.createElement('link');
-  link.setAttribute('rel', 'manifest');
-  link.href = '/manifest.webmanifest';
-  document.head.append(link);
+  decoratePWA();
 }
 
 /**
