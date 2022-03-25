@@ -711,6 +711,11 @@ export function decorateMain(main) {
   decorateSections(main);
   decorateButtons(main);
   decorateBlocks(main);
+
+  const link = document.createElement('link');
+  link.setAttribute('rel', 'manifest');
+  link.href = '/manifest.webmanifest';
+  document.head.append(link);
 }
 
 /**
