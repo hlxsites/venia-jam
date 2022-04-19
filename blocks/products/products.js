@@ -13,7 +13,7 @@ export default async function decorate(block) {
   let config = [...document.querySelectorAll('a')].map((a) => new URL(a.href).pathname);
   if (!config.length) config = readBlockConfig(block);
 
-  block.innerHTML = `<div class="products-controls">
+  block.innerHTML = `<div class="products-controls"><input id="fulltext">
       <p class="products-results-count"><span id="products-results-count"></span> ${ph.results}</p>
       <button class="products-filter-button secondary">${ph.filter}</button>
       <button class="products-sort-button secondary">${ph.sort}</button>
@@ -81,6 +81,7 @@ export default async function decorate(block) {
       if (filterConfig[facetKey]) filterConfig[facetKey] += `, ${facetValue}`;
       else filterConfig[facetKey] = facetValue;
     });
+    filterConfig.fulltext = document.getElementById('fulltext').value;
     return (filterConfig);
   };
 
@@ -175,6 +176,15 @@ export default async function decorate(block) {
     displayResults(results, null);
     displayFacets(facets, filterConfig);
   };
+
+  const fulltextElement = block.querySelector('#fulltext');
+  fulltextElement.addEventListener('input', () => {
+    runSearch(createFilterConfig());
+  });
+
+  if (!Object.keys(config).includes('fulltext')) {
+    fulltextElement.style.display = 'none';
+  }
 
   runSearch(config);
 }

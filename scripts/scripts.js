@@ -598,6 +598,10 @@ export async function lookupPages(config, facets = {}) {
         const rowValues = row[key].split(',').map((t) => t.trim());
         matched = tokens[key].some((t) => rowValues.includes(t));
       }
+      if (key === 'fulltext') {
+        const fulltext = row.title.toLowerCase();
+        matched = fulltext.includes(config.fulltext.toLowerCase());
+      }
       filterMatches[key] = matched;
       return matched;
     });
