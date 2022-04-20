@@ -13,7 +13,7 @@ export default async function decorate(block) {
   let config = [...document.querySelectorAll('a')].map((a) => new URL(a.href).pathname);
   if (!config.length) config = readBlockConfig(block);
 
-  block.innerHTML = `<div class="products-controls"><input id="fulltext">
+  block.innerHTML = `<div class="products-controls"><input id="fulltext" placeholder="${ph.typeToSearch}">
       <p class="products-results-count"><span id="products-results-count"></span> ${ph.results}</p>
       <button class="products-filter-button secondary">${ph.filter}</button>
       <button class="products-sort-button secondary">${ph.sort}</button>
