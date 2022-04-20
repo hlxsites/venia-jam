@@ -206,6 +206,12 @@ main .products-results h4 {
     font-family: var(--body-font-family);
 }
 
+main .products-results .highlight {
+    background-color: var(--link-color);
+    color: var(--background-color);
+    padding: 0 2px;
+}
+
 main .products-results {
     font-size: var(--body-font-size-m);
 }

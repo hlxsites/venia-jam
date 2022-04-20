@@ -592,7 +592,7 @@ export async function lookupPages(config, facets = {}) {
   /* filter */
   const results = window.pageIndex.data.filter((row) => {
     const filterMatches = {};
-    const matchedAll = keys.every((key) => {
+    let matchedAll = keys.every((key) => {
       let matched = false;
       if (row[key]) {
         const rowValues = row[key].split(',').map((t) => t.trim());
@@ -605,6 +605,10 @@ export async function lookupPages(config, facets = {}) {
       filterMatches[key] = matched;
       return matched;
     });
+
+    const isProduct = () => !!row.price;
+
+    if (!isProduct()) matchedAll = false;
 
     /* facets */
     facetKeys.forEach((facetKey) => {

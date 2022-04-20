@@ -64,11 +64,25 @@ export default async function decorate(block) {
     selectSort(event.target);
   });
 
+  const highlightResults = (res) => {
+    const fulltext = document.getElementById('fulltext').value;
+    if (fulltext) {
+      res.querySelectorAll('h4').forEach((title) => {
+        const content = title.textContent;
+        const offset = content.toLowerCase().indexOf(fulltext.toLowerCase());
+        if (offset >= 0) {
+          title.innerHTML = `${content.substr(0, offset)}<span class="highlight">${content.substr(offset, fulltext.length)}</span>${content.substr(offset + fulltext.length)}`;
+        }
+      });
+    }
+  };
+
   const displayResults = async (results) => {
     resultsElement.innerHTML = '';
     results.forEach((product) => {
       resultsElement.append(createProductCard(product, 'products', ph));
     });
+    highlightResults(resultsElement);
   };
 
   const getSelectedFilters = () => [...block.querySelectorAll('input[type="checkbox"]:checked')];
