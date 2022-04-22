@@ -2,6 +2,39 @@ import { fetchPlaceholders, getMetadata, toClassName } from '../../scripts/scrip
 
 export default async function decorateProduct(block) {
   const ph = await fetchPlaceholders();
+  const selectedModifiers = {};
+  let selectedModifierImage;
+
+  const getProduct = () => {
+    let sku = window.location.pathname;
+    const price = +getMetadata('price').substring(1);
+    const details = {};
+    const usp = new URLSearchParams();
+    const modkeys = Object.keys(selectedModifiers);
+    modkeys.forEach((key) => {
+      usp.append(key, selectedModifiers[key]);
+      details[key] = selectedModifiers[key];
+    });
+    sku += usp.toString();
+    details.title = getMetadata('og:title');
+    details.image = selectedModifierImage;
+    return { sku, details, price };
+  };
+
+  const enableAddToCart = () => {
+    const addToButton = block.querySelector('.product-addto button');
+    const quantity = +block.querySelector('.product-quantity input').value;
+    const modkeys = Object.keys(selectedModifiers);
+    if (modkeys.every((key) => selectedModifiers[key])) {
+      const product = getProduct();
+      if (window.cart
+        && window.cart.canAdd(product.sku, product.details, product.price, quantity)) {
+        addToButton.disabled = false;
+        return;
+      }
+    }
+    addToButton.disabled = true;
+  };
 
   const selectImage = (picture) => {
     const images = picture.closest('.product-images');
@@ -61,17 +94,23 @@ export default async function decorateProduct(block) {
     minus.addEventListener('click', () => {
       if (input.value !== input.getAttribute('min')) {
         input.value = +input.value - 1;
+        enableAddToCart();
       }
+    });
+    input.addEventListener('input', () => {
+      enableAddToCart();
     });
     plus.addEventListener('click', () => {
       if (input.value !== input.getAttribute('max')) {
         input.value = +input.value + 1;
+        enableAddToCart();
       }
     });
     return div;
   };
 
   const createPickList = (values, prefix, title) => {
+    selectedModifiers[prefix] = '';
     const div = document.createElement('div');
     div.className = `product-${prefix}s`;
     div.innerHTML = `<h3>${title}</h3>`;
@@ -86,7 +125,12 @@ export default async function decorateProduct(block) {
       radio.addEventListener('change', () => {
         document.getElementById(`product-${prefix}`).textContent = c;
         const picture = [...document.querySelectorAll('.product-images picture')].find((p) => p.dataset.hints.includes(c));
-        selectImage(picture);
+        if (picture) {
+          selectImage(picture);
+          selectedModifierImage = picture.querySelector('img').currentSrc;
+        }
+        selectedModifiers[prefix] = c;
+        enableAddToCart();
       });
       options.append(radio);
       const label = document.createElement('label');
@@ -105,11 +149,22 @@ export default async function decorateProduct(block) {
   const createColors = (colors) => (colors.length ? createPickList(colors, 'color', `${ph.color}`) : '');
   const createSizes = (sizes) => (sizes.length ? createPickList(sizes, 'size', `${ph.size}`) : '');
 
+  const addToCart = () => {
+    const quantity = +block.querySelector('.product-quantity input').value;
+    const product = getProduct();
+    if (window.cart) window.cart.add(product.sku, product.details, product.price, quantity);
+    enableAddToCart();
+  };
+
   const createAddToButtons = () => {
     const div = document.createElement('div');
     div.className = 'product-addto';
-    div.innerHTML = `<p class="button-container"><a href="#" class="button">${ph.addToCart}</a></p>
+    div.innerHTML = `<p class="button-container"><button>${ph.addToCart}</button></p>
     <p class="product-addto-favorites">${ph.addToFavorites}</p>`;
+    div.querySelector('button').addEventListener('click', () => {
+      addToCart();
+      enableAddToCart();
+    });
     return div;
   };
 
@@ -138,4 +193,7 @@ export default async function decorateProduct(block) {
   config.append(createColors(colors), createSizes(sizes), createQuantity(), createAddToButtons());
   block.append(createHeading(h1, price), createImages(images), config);
   selectImage(images[0].picture);
+  selectedModifierImage = images[0].picture.querySelector('img').currentSrc;
+
+  enableAddToCart();
 }

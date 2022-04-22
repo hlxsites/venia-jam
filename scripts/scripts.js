@@ -705,6 +705,14 @@ function buildAutoBlocks(main) {
   }
 }
 
+export function formatPrice(price, currency, locale) {
+  return new Intl.NumberFormat(locale, {
+    style: 'currency',
+    currency,
+    currencyDisplay: 'symbol',
+  }).format(price);
+}
+
 function decoratePWA() {
   const appendLink = (rel, href, sizes) => {
     const link = document.createElement('link');

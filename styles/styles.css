@@ -184,7 +184,7 @@ main img {
 
 /* buttons */
 
-main a.button:any-link, main button {
+a.button:any-link, button {
   text-decoration: none;
   border: 2px solid transparent;
   padding: 5px 30px;
@@ -206,11 +206,16 @@ main a.button:any-link, main button {
   border-radius: 30px;
 }
 
-main a.button:hover, a.button:focus, main button:hover, button:focus  {
+button:disabled, button:disabled:hover {
+  background-color: var(--overlay-background-color);
+  cursor: unset;
+}
+
+a.button:hover, a.button:focus, button:hover, button:focus  {
   background-color: var(--button-hover-color);
 }
 
-main a.button.secondary, main button.secondary {
+a.button.secondary, button.secondary {
   background-color: unset;
   border: 2px solid currentColor;
   color: var(--text-color)
