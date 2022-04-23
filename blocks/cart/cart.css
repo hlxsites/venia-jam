@@ -44,6 +44,11 @@ header .cart .cart-display {
     font-size: var(--body-font-size-m);
 }
 
+header .cart .cart-items {
+    max-height: 60vh;
+    overflow-y: scroll;
+}
+
 header .cart .cart-item {
     display: flex;
     justify-content: space-between;
@@ -61,8 +66,9 @@ header .cart .cart-item h3 {
     font-family: var(--body-font-family);
 } 
 
-header .cart .cart-item p {
+header .cart .cart-item p, header .cart .cart-header {
     margin: 0;
+    font-size: var(--body-font-size-m);
 }
 
 header .cart .cart-header {

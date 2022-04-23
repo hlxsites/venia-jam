@@ -163,7 +163,6 @@ export default async function decorateProduct(block) {
     <p class="product-addto-favorites">${ph.addToFavorites}</p>`;
     div.querySelector('button').addEventListener('click', () => {
       addToCart();
-      enableAddToCart();
     });
     return div;
   };
@@ -196,4 +195,6 @@ export default async function decorateProduct(block) {
   selectedModifierImage = images[0].picture.querySelector('img').currentSrc;
 
   enableAddToCart();
+
+  document.body.addEventListener('cart-update', enableAddToCart);
 }

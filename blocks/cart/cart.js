@@ -1,10 +1,9 @@
 import { fetchPlaceholders, formatPrice, createOptimizedPicture } from '../../scripts/scripts.js';
 
 class Cart {
-  constructor(display) {
+  constructor() {
     this.maxItem = 9;
     this.items = [];
-    this.display = display || this.log;
     this.load();
   }
 
@@ -15,8 +14,7 @@ class Cart {
   remove(sku) {
     const index = this.items.findIndex((item) => sku === item.sku);
     this.items.splice(index, 1);
-    this.store();
-    this.display();
+    this.update();
   }
 
   canAdd(sku, details, price, quantity = 1) {
@@ -35,8 +33,7 @@ class Cart {
         sku, details, price, quantity,
       });
     }
-    this.store();
-    this.display();
+    this.update();
   }
 
   find(sku) {
@@ -48,23 +45,20 @@ class Cart {
     if (this.items[index].quantity + quantity <= this.maxItem) {
       this.items[index].quantity += quantity;
     }
-    this.store();
-    this.display();
+    this.update();
   }
 
   minus(sku) {
     const index = this.items.findIndex((item) => sku === item.sku);
     this.items[index].quantity -= 1;
     if (!this.items[index].quantity) this.remove(sku);
-    this.store();
-    this.display();
+    this.update();
   }
 
   setQuantity(sku, q) {
     const index = this.items.findIndex((item) => sku === item.sku);
     this.line_items[index].quantity = q;
-    this.store();
-    this.display();
+    this.update();
   }
 
   get totalAmount() {
@@ -85,12 +79,13 @@ class Cart {
 
   clear() {
     this.items = [];
-    this.store();
-    this.display();
+    this.update();
   }
 
-  store() {
+  update() {
     localStorage.setItem('cart', JSON.stringify({ lastUpdate: new Date(), items: this.items }));
+    const updateEvent = new Event('cart-update', this);
+    document.body.dispatchEvent(updateEvent);
   }
 
   load() {
@@ -105,7 +100,7 @@ class Cart {
         // }
       });
     }
-    this.display();
+    this.update();
   }
 }
 
@@ -169,7 +164,8 @@ async function updateCartDisplay() {
 }
 
 export default function decorate(block) {
-  window.cart = window.cart || new Cart(updateCartDisplay);
+  document.body.addEventListener('cart-update', updateCartDisplay);
+  window.cart = window.cart || new Cart();
   const displayArea = document.createElement('div');
   displayArea.className = 'cart-display';
   block.append(displayArea);
