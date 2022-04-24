@@ -192,7 +192,7 @@ export default async function decorateProduct(block) {
   config.append(createColors(colors), createSizes(sizes), createQuantity(), createAddToButtons());
   block.append(createHeading(h1, price), createImages(images), config);
   selectImage(images[0].picture);
-  selectedModifierImage = images[0].picture.querySelector('img').currentSrc;
+  selectedModifierImage = images[0].picture.querySelector('img').src;
 
   enableAddToCart();
 

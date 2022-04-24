@@ -111,14 +111,16 @@ async function updateCartDisplay() {
   const createCartItem = (item) => {
     const { details } = item;
     const div = document.createElement('div');
+
+    const createMods = (keys) => keys.map((key) => (details[key] ? `<p>${ph[key]} : ${details[key]}</p>` : '')).join('');
+
     div.className = 'cart-item';
     div.innerHTML = `
     <div class="cart-item-image">${createOptimizedPicture(details.image).outerHTML}
     </div>
     <div class="cart-item-details">
         <h3>${details.title}</h3>
-        <p>${ph.color} : ${details.color}</p>
-        <p>${ph.size} : ${details.size}</p>
+        ${createMods(['color', 'size'])}
         <p>${ph.qty} : ${item.quantity}</p>
         <p>${formatPrice(item.price, 'USD')} ${ph.ea}</p>
     </div>

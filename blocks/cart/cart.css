@@ -57,6 +57,7 @@ header .cart .cart-item {
 }
 
 header .cart .cart-item-details {
+    flex: 1;
     padding: 0 20px;
 }
 
@@ -87,12 +88,14 @@ header .cart .cart-controls p {
 header .cart .cart-display .cart-item-image img {
     display: block;
     width: 100px;
+    flex: 0 0 100px;
 }
 
 header .cart .cart-display .icon-trashcan {
     display: block;
-    width: 16px;
+    width: 40px;
     height: 16px;
+    flex: 0 0 40px;
 }
 
 header .cart .cart-mini::before {
