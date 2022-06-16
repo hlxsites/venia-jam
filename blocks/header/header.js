@@ -68,6 +68,31 @@ export default async function decorate(block) {
   /* init cart */
   const cart = block.querySelector('.icon-cart').closest('li');
   cart.classList.add('cart');
+  // StorefrontSDK
+  cart.setAttribute('data-sfsdk-cart', '');
+
   decorateBlock(cart);
   loadBlock(cart);
+
+  /**
+   * Load the StorefrontSDK script that will populate the div created above.
+   * <script type="module">
+   *    import 'http://localhost:3001/storefront-sdk-cart.bundle.js';
+   *
+   *    StorefrontSDK.init({
+   *      endpoint: 'https://graph.adobe.io/api/7f6c715a-35b6-4905-bd51-62c1ef973d68/graphql?api_key=commerce-graphql-onboarding',
+   *    });
+   * </script>
+   */
+  const sfsdkScript = document.createElement('script');
+  sfsdkScript.type = 'module';
+  sfsdkScript.innerText = `
+  import 'http://localhost:3001/storefront-sdk-widget.bundle-v0.1.0.js';
+    
+    StorefrontSDK.init({
+      endpoint: 'https://graph.adobe.io/api/7f6c715a-35b6-4905-bd51-62c1ef973d68/graphql?api_key=commerce-graphql-onboarding',
+    });
+  `;
+
+  document.body.append(sfsdkScript);
 }

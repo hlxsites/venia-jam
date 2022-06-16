@@ -9,6 +9,10 @@ indices:
       - '**/Document.*'
     target: /query-index
     properties:
+      sku:
+        select: head > meta[name="sku"]
+        value: |
+          attribute(el, 'content')
       title:
         select: head > meta[property="og:title"]
         value: |

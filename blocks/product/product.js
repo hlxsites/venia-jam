@@ -1,4 +1,8 @@
-import { fetchPlaceholders, getMetadata, toClassName } from '../../scripts/scripts.js';
+import {
+  fetchPlaceholders,
+  getMetadata,
+  toClassName,
+} from '../../scripts/scripts.js';
 
 export default async function decorateProduct(block) {
   const ph = await fetchPlaceholders();
@@ -6,7 +10,7 @@ export default async function decorateProduct(block) {
   let selectedModifierImage;
 
   const getProduct = () => {
-    let sku = window.location.pathname;
+    const sku = getMetadata('sku');
     const price = +getMetadata('price').substring(1);
     const details = {};
     const usp = new URLSearchParams();
@@ -15,7 +19,7 @@ export default async function decorateProduct(block) {
       usp.append(key, selectedModifiers[key]);
       details[key] = selectedModifiers[key];
     });
-    sku += usp.toString();
+    // TODO: parentSku
     details.title = getMetadata('og:title');
     details.image = selectedModifierImage;
     return { sku, details, price };
@@ -26,9 +30,10 @@ export default async function decorateProduct(block) {
     const quantity = +block.querySelector('.product-quantity input').value;
     const modkeys = Object.keys(selectedModifiers);
     if (modkeys.every((key) => selectedModifiers[key])) {
-      const product = getProduct();
-      if (window.cart
-        && window.cart.canAdd(product.sku, product.details, product.price, quantity)) {
+      if (
+        typeof window.StorefrontSDK?.addProductsToCart !== 'undefined' &&
+        quantity > 0
+      ) {
         addToButton.disabled = false;
         return;
       }
@@ -43,7 +48,11 @@ export default async function decorateProduct(block) {
     const buttons = wrapper.querySelector('.product-images-buttons');
     const index = [...images.children].indexOf(picture);
     const button = [...buttons.children][index];
-    images.scrollTo({ top: 0, left: picture.offsetLeft - images.offsetLeft, behavior: 'smooth' });
+    images.scrollTo({
+      top: 0,
+      left: picture.offsetLeft - images.offsetLeft,
+      behavior: 'smooth',
+    });
 
     [...images.children].forEach((r) => r.classList.remove('selected'));
     picture.classList.add('selected');
@@ -124,7 +133,9 @@ export default async function decorateProduct(block) {
       radio.value = c;
       radio.addEventListener('change', () => {
         document.getElementById(`product-${prefix}`).textContent = c;
-        const picture = [...document.querySelectorAll('.product-images picture')].find((p) => p.dataset.hints.includes(c));
+        const picture = [
+          ...document.querySelectorAll('.product-images picture'),
+        ].find((p) => p.dataset.hints.includes(c));
         if (picture) {
           selectImage(picture);
           selectedModifierImage = picture.querySelector('img').currentSrc;
@@ -143,17 +154,19 @@ export default async function decorateProduct(block) {
     selected.className = `product-${prefix}-selected`;
     selected.innerHTML = `Selected ${title}: <span id="product-${prefix}">${ph.none}</span>`;
     div.append(selected);
-    return (div);
+    return div;
   };
 
-  const createColors = (colors) => (colors.length ? createPickList(colors, 'color', `${ph.color}`) : '');
-  const createSizes = (sizes) => (sizes.length ? createPickList(sizes, 'size', `${ph.size}`) : '');
+  const createColors = (colors) =>
+    colors.length ? createPickList(colors, 'color', `${ph.color}`) : '';
+
+  const createSizes = (sizes) =>
+    sizes.length ? createPickList(sizes, 'size', `${ph.size}`) : '';
 
   const addToCart = () => {
     const quantity = +block.querySelector('.product-quantity input').value;
-    const product = getProduct();
-    if (window.cart) window.cart.add(product.sku, product.details, product.price, quantity);
-    enableAddToCart();
+    const { sku } = getProduct();
+    window.StorefrontSDK?.addProductsToCart?.([{ quantity, sku }]);
   };
 
   const createAddToButtons = () => {
@@ -172,13 +185,21 @@ export default async function decorateProduct(block) {
     div.className = 'product-heading';
     div.innerHTML = `<div class="product-price">${price}</div>`;
     div.prepend(h1);
-    return (div);
+    return div;
   };
 
   const h1 = document.querySelector('h1');
   const price = getMetadata('price');
-  const colors = getMetadata('colors') ? getMetadata('colors').split(',').map((e) => e.trim()) : [];
-  const sizes = getMetadata('sizes') ? getMetadata('sizes').split(',').map((e) => e.trim()) : [];
+  const colors = getMetadata('colors')
+    ? getMetadata('colors')
+        .split(',')
+        .map((e) => e.trim())
+    : [];
+  const sizes = getMetadata('sizes')
+    ? getMetadata('sizes')
+        .split(',')
+        .map((e) => e.trim())
+    : [];
   const images = [...block.children].map((row) => {
     const hints = row.children[1].textContent;
     const picture = row.querySelector('picture');
@@ -189,12 +210,15 @@ export default async function decorateProduct(block) {
 
   const config = document.createElement('div');
   config.className = 'product-config';
-  config.append(createColors(colors), createSizes(sizes), createQuantity(), createAddToButtons());
+  config.append(
+    createColors(colors),
+    createSizes(sizes),
+    createQuantity(),
+    createAddToButtons()
+  );
   block.append(createHeading(h1, price), createImages(images), config);
   selectImage(images[0].picture);
   selectedModifierImage = images[0].picture.querySelector('img').src;
 
-  enableAddToCart();
-
-  document.body.addEventListener('cart-update', enableAddToCart);
+  document.addEventListener('StorefrontSDK:Loaded', enableAddToCart);
 }
