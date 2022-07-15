@@ -226,6 +226,6 @@ export default async function decorateProduct(block) {
   window.addEventListener('StorefrontSDKReady', () => {
     window.StorefrontSDK.customerToken.watch((token) => {
       enableAddToCart(!!token);
-    }, true);
+    });
   });
 }

@@ -77,7 +77,7 @@ export default async function decorate(block) {
     // Cart Count Indicator
     window.StorefrontSDK.cartItemsQuantity.watch((qty) => {
       cart.setAttribute('data-cart-qty', qty || '');
-    }, true);
+    });
   });
 
   const sfsdkScript = document.createElement('script');
