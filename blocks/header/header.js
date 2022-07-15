@@ -68,31 +68,35 @@ export default async function decorate(block) {
   /* init cart */
   const cart = block.querySelector('.icon-cart').closest('li');
   cart.classList.add('cart');
+
   // StorefrontSDK
-  cart.setAttribute('data-sfsdk-cart', '');
+  window.addEventListener('StorefrontSDKReady', () => {
+    // Toggle Cart Panel
+    cart.onclick = () => window.StorefrontSDK.togglePanel('cart');
 
-  decorateBlock(cart);
-  loadBlock(cart);
+    // Cart Count Indicato
+    window.StorefrontSDK.cartItemsQuantity.watch((qty) => {
+      cart.setAttribute('data-cart-qty', qty || '');
+    });
+  });
 
-  /**
-   * Load the StorefrontSDK script that will populate the div created above.
-   * <script type="module">
-   *    import 'http://localhost:3001/storefront-sdk-cart.bundle.js';
-   *
-   *    StorefrontSDK.init({
-   *      endpoint: 'https://graph.adobe.io/api/7f6c715a-35b6-4905-bd51-62c1ef973d68/graphql?api_key=commerce-graphql-onboarding',
-   *    });
-   * </script>
-   */
   const sfsdkScript = document.createElement('script');
   sfsdkScript.type = 'module';
-  sfsdkScript.innerText = `
-  import 'http://localhost:3001/storefront-sdk-widget.bundle-v0.1.0.js';
-    
-    StorefrontSDK.init({
-      endpoint: 'https://graph.adobe.io/api/7f6c715a-35b6-4905-bd51-62c1ef973d68/graphql?api_key=commerce-graphql-onboarding',
-    });
+  sfsdkScript.async = true;
+  sfsdkScript.text = `
+    import { render, api } from "http://localhost:3001/storefront-sdk-widget.js";
+
+    // Initialize
+    const options = {
+      endpoint: "https://graph.adobe.io/api/63e62e43-8eb8-45a2-b0f6-f7c3845093db/graphql?api_key=2c6d06bb3aef463db8485c88a90f563f",
+      mesh: "storefrontstaticenvmesh"
+    };
+
+    render(options, document.body);
   `;
 
   document.body.append(sfsdkScript);
+
+  decorateBlock(cart);
+  loadBlock(cart);
 }

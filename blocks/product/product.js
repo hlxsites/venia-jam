@@ -19,25 +19,30 @@ export default async function decorateProduct(block) {
       usp.append(key, selectedModifiers[key]);
       details[key] = selectedModifiers[key];
     });
-    // TODO: parentSku
     details.title = getMetadata('og:title');
     details.image = selectedModifierImage;
     return { sku, details, price };
   };
 
-  const enableAddToCart = () => {
+  const enableAddToCart = (enabled) => {
     const addToButton = block.querySelector('.product-addto button');
     const quantity = +block.querySelector('.product-quantity input').value;
     const modkeys = Object.keys(selectedModifiers);
+
+    // Force Disabled
+    if (typeof enabled === 'boolean') {
+      addToButton.disabled = !enabled;
+      return;
+    }
+
+    // Enable if Quantity has been selected
     if (modkeys.every((key) => selectedModifiers[key])) {
-      if (
-        typeof window.StorefrontSDK?.addProductsToCart !== 'undefined' &&
-        quantity > 0
-      ) {
+      if (quantity > 0) {
         addToButton.disabled = false;
         return;
       }
     }
+
     addToButton.disabled = true;
   };
 
@@ -157,11 +162,9 @@ export default async function decorateProduct(block) {
     return div;
   };
 
-  const createColors = (colors) =>
-    colors.length ? createPickList(colors, 'color', `${ph.color}`) : '';
+  const createColors = (colors) => (colors.length ? createPickList(colors, 'color', `${ph.color}`) : '');
 
-  const createSizes = (sizes) =>
-    sizes.length ? createPickList(sizes, 'size', `${ph.size}`) : '';
+  const createSizes = (sizes) => (sizes.length ? createPickList(sizes, 'size', `${ph.size}`) : '');
 
   const addToCart = () => {
     const quantity = +block.querySelector('.product-quantity input').value;
@@ -172,7 +175,7 @@ export default async function decorateProduct(block) {
   const createAddToButtons = () => {
     const div = document.createElement('div');
     div.className = 'product-addto';
-    div.innerHTML = `<p class="button-container"><button>${ph.addToCart}</button></p>
+    div.innerHTML = `<p class="button-container"><button disabled>${ph.addToCart}</button></p>
     <p class="product-addto-favorites">${ph.addToFavorites}</p>`;
     div.querySelector('button').addEventListener('click', () => {
       addToCart();
@@ -192,13 +195,13 @@ export default async function decorateProduct(block) {
   const price = getMetadata('price');
   const colors = getMetadata('colors')
     ? getMetadata('colors')
-        .split(',')
-        .map((e) => e.trim())
+      .split(',')
+      .map((e) => e.trim())
     : [];
   const sizes = getMetadata('sizes')
     ? getMetadata('sizes')
-        .split(',')
-        .map((e) => e.trim())
+      .split(',')
+      .map((e) => e.trim())
     : [];
   const images = [...block.children].map((row) => {
     const hints = row.children[1].textContent;
@@ -214,11 +217,15 @@ export default async function decorateProduct(block) {
     createColors(colors),
     createSizes(sizes),
     createQuantity(),
-    createAddToButtons()
+    createAddToButtons(),
   );
   block.append(createHeading(h1, price), createImages(images), config);
   selectImage(images[0].picture);
   selectedModifierImage = images[0].picture.querySelector('img').src;
 
-  document.addEventListener('StorefrontSDK:Loaded', enableAddToCart);
+  window.addEventListener('StorefrontSDKReady', () => {
+    window.StorefrontSDK.customerToken.watch((token) => {
+      enableAddToCart(!!token);
+    });
+  });
 }
