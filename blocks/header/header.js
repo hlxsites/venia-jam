@@ -74,10 +74,10 @@ export default async function decorate(block) {
     // Toggle Cart Panel
     cart.onclick = () => window.StorefrontSDK.togglePanel('cart');
 
-    // Cart Count Indicato
+    // Cart Count Indicator
     window.StorefrontSDK.cartItemsQuantity.watch((qty) => {
       cart.setAttribute('data-cart-qty', qty || '');
-    });
+    }, true);
   });
 
   const sfsdkScript = document.createElement('script');
