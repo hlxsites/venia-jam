@@ -84,7 +84,7 @@ export default async function decorate(block) {
   sfsdkScript.type = 'module';
   sfsdkScript.async = true;
   sfsdkScript.text = `
-    import { render, api } from "http://localhost:3001/storefront-sdk-widget.js";
+    import { render, api } from "https://storefront-widgets.s3.amazonaws.com/develop/storefront-sdk-widget.js";
 
     // Initialize
     const options = {
