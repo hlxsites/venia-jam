@@ -8,6 +8,7 @@ class Cart {
   }
 
   log() {
+    // eslint-disable-next-line no-console
     console.log(this.items);
   }
 
