@@ -23,11 +23,11 @@ header nav .nav-tools {
   grid-area: tools;
 }
 
-header nav .nav-tools img {
+header nav .nav-tools svg {
   display: none;
 }
 
-header nav .nav-tools img.icon-cart {
+header nav .nav-tools .icon-cart svg {
   display: unset;
 }
 
@@ -50,7 +50,7 @@ header nav[aria-expanded='true'] {
 }
 
 
-header nav[aria-expanded='true'] .nav-tools img {
+header nav[aria-expanded='true'] .nav-tools svg {
   display: unset;
 }
 
@@ -280,7 +280,7 @@ header nav[aria-expanded='true'] {
     padding-bottom: 16px;
   } 
 
-  header nav .nav-tools img {
+  header nav .nav-tools svg {
     display: unset;
     padding: 0 4px;
   }
