@@ -429,6 +429,32 @@ export function makeLinksRelative(main) {
 }
 
 /**
+ * Decorates icons.
+ * @param {Element} element The container element
+ */
+
+export function decorateIcons(element = document) {
+  element.querySelectorAll('span.icon').forEach(async (span) => {
+    if (span.classList.length < 2 || !span.classList[1].startsWith('icon-')) {
+      return;
+    }
+    const icon = span.classList[1].substring(5);
+    // eslint-disable-next-line no-use-before-define
+    const resp = await fetch(`${window.hlx.codeBasePath}/icons/${icon}.svg`);
+    if (resp.ok) {
+      const iconHTML = await resp.text();
+      if (iconHTML.match(/<style/i)) {
+        const img = document.createElement('img');
+        img.src = `data:image/svg+xml,${encodeURIComponent(iconHTML)}`;
+        span.appendChild(img);
+      } else {
+        span.innerHTML = iconHTML;
+      }
+    }
+  });
+}
+
+/**
  * Decorates the picture elements and removes formatting.
  * @param {Element} main The container element
  */
@@ -473,7 +499,6 @@ async function waitForLCP() {
 
   document.querySelector('body').classList.add('appear');
   const lcpCandidate = document.querySelector('main img');
-  console.log(lcpCandidate);
   await new Promise((resolve) => {
     if (lcpCandidate && !lcpCandidate.complete) {
       lcpCandidate.setAttribute('loading', 'eager');
@@ -682,18 +707,18 @@ function buildHeroBlock(main) {
   }
 }
 
-function loadHeader(header) {
+async function loadHeader(header) {
   const headerBlock = buildBlock('header', '');
   header.append(headerBlock);
   decorateBlock(headerBlock);
-  loadBlock(headerBlock);
+  await loadBlock(headerBlock);
 }
 
-function loadFooter(footer) {
+async function loadFooter(footer) {
   const footerBlock = buildBlock('footer', '');
   footer.append(footerBlock);
   decorateBlock(footerBlock);
-  loadBlock(footerBlock);
+  await loadBlock(footerBlock);
 }
 
 /**
@@ -742,13 +767,17 @@ function decoratePWA() {
           { scope: '/' },
         );
         if (registration.installing) {
+          // eslint-disable-next-line no-console
           console.log('Service worker installing');
         } else if (registration.waiting) {
+          // eslint-disable-next-line no-console
           console.log('Service worker installed');
         } else if (registration.active) {
+          // eslint-disable-next-line no-console
           console.log('Service worker active');
         }
       } catch (error) {
+        // eslint-disable-next-line no-console
         console.error(`Registration failed with ${error}`);
       }
     }
@@ -792,8 +821,10 @@ async function loadLazy(doc) {
   const main = doc.querySelector('main');
   await loadBlocks(main);
 
-  loadHeader(doc.querySelector('header'));
-  loadFooter(doc.querySelector('footer'));
+  await loadHeader(doc.querySelector('header'));
+  await loadFooter(doc.querySelector('footer'));
+
+  decorateIcons();
 
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
   addFavIcon(`${window.hlx.codeBasePath}/styles/favicon.svg`);
@@ -808,7 +839,6 @@ function loadDelayed() {
   window.setTimeout(() => import('./delayed.js'), 3000);
   // load anything that can be postponed to the latest here
 }
-
 
 /*
  * lighthouse performance instrumentation helper
