@@ -454,7 +454,6 @@ export function decorateIcons(element = document) {
   });
 }
 
-
 /**
  * Decorates the picture elements and removes formatting.
  * @param {Element} main The container element
@@ -500,7 +499,6 @@ async function waitForLCP() {
 
   document.querySelector('body').classList.add('appear');
   const lcpCandidate = document.querySelector('main img');
-  console.log(lcpCandidate);
   await new Promise((resolve) => {
     if (lcpCandidate && !lcpCandidate.complete) {
       lcpCandidate.setAttribute('loading', 'eager');
@@ -769,13 +767,17 @@ function decoratePWA() {
           { scope: '/' },
         );
         if (registration.installing) {
+          // eslint-disable-next-line no-console
           console.log('Service worker installing');
         } else if (registration.waiting) {
+          // eslint-disable-next-line no-console
           console.log('Service worker installed');
         } else if (registration.active) {
+          // eslint-disable-next-line no-console
           console.log('Service worker active');
         }
       } catch (error) {
+        // eslint-disable-next-line no-console
         console.error(`Registration failed with ${error}`);
       }
     }
@@ -837,7 +839,6 @@ function loadDelayed() {
   window.setTimeout(() => import('./delayed.js'), 3000);
   // load anything that can be postponed to the latest here
 }
-
 
 /*
  * lighthouse performance instrumentation helper
